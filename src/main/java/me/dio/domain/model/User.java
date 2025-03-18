@@ -1,8 +1,9 @@
 package me.dio.domain.model;
 
 import jakarta.persistence.*;
-
-import java.util.List;
+import java.time.LocalDate;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity(name = "tb_user")
 public class User {
@@ -12,65 +13,24 @@ public class User {
     private Long id;
 
     private String name;
+    private LocalDate birthDate;
 
     @OneToOne(cascade = CascadeType.ALL)
-    private Account account;
+    private Address address;
 
-    @OneToOne(cascade = CascadeType.ALL)
-    private Card card;
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    private Set<Post> posts = new HashSet<>();
 
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    private List<Feature> features;
+    @ManyToMany
+    @JoinTable(
+        name = "user_followers",
+        joinColumns = @JoinColumn(name = "user_id"),
+        inverseJoinColumns = @JoinColumn(name = "follower_id")
+    )
+    private Set<User> followers = new HashSet<>();
 
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    private List<News> news;
+    @ManyToMany(mappedBy = "followers")
+    private Set<User> following = new HashSet<>();
 
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public Account getAccount() {
-        return account;
-    }
-
-    public void setAccount(Account account) {
-        this.account = account;
-    }
-
-    public Card getCard() {
-        return card;
-    }
-
-    public void setCard(Card card) {
-        this.card = card;
-    }
-
-    public List<Feature> getFeatures() {
-        return features;
-    }
-
-    public void setFeatures(List<Feature> features) {
-        this.features = features;
-    }
-
-    public List<News> getNews() {
-        return news;
-    }
-
-    public void setNews(List<News> news) {
-        this.news = news;
-    }
-
+    // Getters e Setters
 }

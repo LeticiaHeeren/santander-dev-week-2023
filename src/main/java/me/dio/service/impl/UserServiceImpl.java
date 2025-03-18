@@ -22,10 +22,15 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User create(User userToCreate) {
-        if (userRepository.existsByAccountNumber(userToCreate.getAccount().getNumber())) {
-            throw new IllegalArgumentException("This Account number already exists.");
-        }
-        return userRepository.save(userToCreate);
+    public User create(User user) {
+        return userRepository.save(user);
+    }
+
+    @Override
+    public void followUser(Long userId, Long followerId) {
+        User user = userRepository.findById(userId).orElseThrow(NoSuchElementException::new);
+        User follower = userRepository.findById(followerId).orElseThrow(NoSuchElementException::new);
+        user.getFollowers().add(follower);
+        userRepository.save(user);
     }
 }

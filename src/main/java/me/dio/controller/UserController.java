@@ -4,7 +4,6 @@ import me.dio.domain.model.User;
 import me.dio.service.UserService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
 
@@ -20,17 +19,23 @@ public class UserController {
 
     @GetMapping("/{id}")
     public ResponseEntity<User> findById(@PathVariable Long id) {
-       var user = userService.findById(id);
-       return ResponseEntity.ok(user);
+        User user = userService.findById(id);
+        return ResponseEntity.ok(user);
     }
 
     @PostMapping
-    public ResponseEntity<User> create(@RequestBody User userToCreate) {
-        var userCreated = userService.create(userToCreate);
+    public ResponseEntity<User> create(@RequestBody User user) {
+        User createdUser = userService.create(user);
         URI location = ServletUriComponentsBuilder.fromCurrentRequest()
                 .path("/{id}")
-                .buildAndExpand(userCreated.getId())
+                .buildAndExpand(createdUser.getId())
                 .toUri();
-        return ResponseEntity.created(location).body(userCreated);
+        return ResponseEntity.created(location).body(createdUser);
+    }
+
+    @PostMapping("/{userId}/follow/{followerId}")
+    public ResponseEntity<Void> followUser(@PathVariable Long userId, @PathVariable Long followerId) {
+        userService.followUser(userId, followerId);
+        return ResponseEntity.noContent().build();
     }
 }
